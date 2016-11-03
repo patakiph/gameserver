@@ -1,16 +1,24 @@
 package server.servlets.users_data;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by Ольга on 23.10.2016.
  */
 public class Token {
     private Long token;
+    private Date date = new Date();
 
     public Token(Long token){
         this.token = token;
     }
+
     public Long getToken(){
         return this.token;
+    }
+    public Date getDate(){
+        return this.date;
     }
     public void setToken(Long token){
         this.token = token;

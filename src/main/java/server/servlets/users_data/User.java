@@ -1,11 +1,15 @@
 package server.servlets.users_data;
 
 
+import java.util.Date;
+
 /**
  * Created by Ольга on 23.10.2016.
  */
 public class User {
     private String login;
+    private String id;
+    private Date registration_date = new Date(); // ! не предоставлять api для изменения даты регистрации !
     private String name = "no_name";
     private String email;
     private String password;
