@@ -20,7 +20,7 @@ public class ApiServlet {
                 org.glassfish.jersey.servlet.ServletContainer.class, "/*"); //ServletConteiner is httpServlet
         jerseyServlet.setInitOrder(0);
 
-        jerseyServlet.setInitParameter(   //что за параметры мы устанавливаем?
+        jerseyServlet.setInitParameter(
                 "jersey.config.server.provider.packages",
                 "server"
         );

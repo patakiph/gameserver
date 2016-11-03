@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 
 import static server.servlets.auth.AuthenticationServlet.getTokens;
+import static server.servlets.auth.AuthenticationServlet.getUsers;
 
 /**
  * Created by Ольга on 23.10.2016.
@@ -28,13 +29,15 @@ public class DataServlet{
     @GET
     @Path("users")
     @Produces("application/json")
-    public Response changeName() { //вот тут как фильтр применить
+    public Response getData() { //вот тут как фильтр применить
         StringBuilder str = new StringBuilder("{\"users\" : [");
         for (String name: getTokens().getLoginToken().keySet()){
 
             String key =name.toString();
             String value = getTokens().getLoginToken().get(name).toString();
-            str.append("{"+key+":"+value+"}" + ", ");
+            String user_name = getUsers().get(name).getName();
+            str.append("{"+ "name=" + user_name +", " + "login="+ key +", " +"token=" + value + "}" + ", ");
+
         }
         str.deleteCharAt(str.length()-1);
         str.deleteCharAt(str.length()-1);

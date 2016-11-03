@@ -49,15 +49,20 @@ public class ProfileServlet {
         if (token == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        if (getUsers().containsKey(name)) {
-            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
-        }
-            String oldName = getTokens().getLogin(new Token(Long.parseLong(token)));
-            getTokens().remove(new Token(Long.parseLong(token)));
-            getTokens().add(name, new Token(Long.parseLong(token)));
-            String password = getUsers().get(oldName).getPassword();
-            getUsers().put(name,new User(name,password));
-            getUsers().remove(oldName);
+//        if (getUsers().containsKey(name)) {
+//            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+//        }
+            String login  = getTokens().getLogin(new Token(Long.parseLong(token)));
+            User user = getUsers().get(login);
+            String oldName = user.getName();
+            user.setName(name);
+            getUsers().remove(login);
+            getUsers().put(login,user);
+//            getTokens().remove(new Token(Long.parseLong(token)));
+//            getTokens().add(name, new Token(Long.parseLong(token)));
+//            String password = getUsers().get(oldName).getPassword();
+//            getUsers().put(name,new User(name,password));
+//            getUsers().remove(oldName);
         log.info("User '{}' changed his name to '{}'", oldName, name);
         return Response.ok("User " + oldName + " changed his name to " + name).build();
 

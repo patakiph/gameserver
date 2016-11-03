@@ -6,6 +6,7 @@ package server.servlets.users_data;
  */
 public class User {
     private String login;
+    private String name = "no_name";
     private String email;
     private String password;
     private Token token;
@@ -19,6 +20,7 @@ public class User {
     public User(String login, String password) {
         this.login = login;
         this.password = password;
+        this.name = login;
     }
     public String getLogin() {
         return login;
@@ -31,11 +33,15 @@ public class User {
     public String getEmail() {
         return email;
     }
-
+    public String getName() {
+        return name;
+    }
     public void setEmail(String email) {
         this.email = email;
     }
-
+    public void setName(String name) {
+        this.name = name;
+    }
     public String getPassword() {
         return password;
     }
