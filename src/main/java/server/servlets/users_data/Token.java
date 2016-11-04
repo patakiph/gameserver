@@ -8,18 +8,19 @@ import java.util.Date;
 /**
  * Created by Ольга on 23.10.2016.
  */
-@Entity
+
 public class Token implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private int id;
     private Long token;
     private Date date = new Date();
 
+    public Token(){}
     public Token(Long token){
         this.token = token;
     }
 
+    public int getId(){return this.id;}
     public Long getToken(){
         return this.token;
     }

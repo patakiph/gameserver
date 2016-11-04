@@ -9,14 +9,14 @@ import java.util.Date;
  * Created by Ольга on 23.10.2016.
  */
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User implements Serializable {
     private String login;
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @Column(name = "date")
+    @Column(name = "date", nullable = false)
     private Date registrationDate; // ! не предоставлять api для изменения даты регистрации !
     @Column(name = "name")
     private String name = "no_name";
@@ -27,6 +27,7 @@ public class User implements Serializable {
     @Column(nullable = true, name = "token")
     private Token token;
 
+    public User() {}
     public User(String login, String email, String password, Token token) {
         this.login = login;
         this.email = email;

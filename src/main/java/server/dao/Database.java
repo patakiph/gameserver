@@ -1,11 +1,13 @@
 package server.dao;
 
+import com.fasterxml.classmate.AnnotationConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import server.servlets.users_data.User;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +20,11 @@ class Database {
 
     static {
         try {
-            sessionFactory = new Configuration().configure().buildSessionFactory();
+
+            sessionFactory = new Configuration().
+                    configure().
+                    //addPackage("com.xyz") //add package if used.
+                            addAnnotatedClass(User.class).buildSessionFactory();
         } catch (Throwable ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
