@@ -45,10 +45,6 @@ public class AuthenticationServlet {
             return Response.status(Response.Status.NOT_ACCEPTABLE).build();
         }
 
-        if (usersDao.findByLogin(user) != null) {
-            System.out.println("User " + user + " already exists");
-        }
-
         usersDao.insert(new User(user, password));
         System.out.println(usersDao.getAll());
         log.info("New user '{}' registered", user);
