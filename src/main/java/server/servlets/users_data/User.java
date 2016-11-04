@@ -27,6 +27,10 @@ public class User implements Serializable {
     @Column(nullable = true, name = "token")
     private Token token;
 
+    public User() {
+
+    }
+
     public User(String login, String email, String password, Token token) {
         this.login = login;
         this.email = email;

@@ -40,9 +40,15 @@ public class AuthenticationServlet {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        if (users.putIfAbsent(user, new User(user, password)) != null) {
+        if (usersDao.findByLogin(user).size() > 0) {
+            log.warn("User {} already exists", user);
             return Response.status(Response.Status.NOT_ACCEPTABLE).build();
         }
+
+        if (usersDao.findByLogin(user) != null) {
+            System.out.println("User " + user + " already exists");
+        }
+
         usersDao.insert(new User(user, password));
         System.out.println(usersDao.getAll());
         log.info("New user '{}' registered", user);
@@ -51,8 +57,11 @@ public class AuthenticationServlet {
 
     static {
         users = new ConcurrentHashMap<>();
-        users.put("admin", new User("admin", "admin"));
-        usersDao.insert(new User("admin", "admin"));
+        if (usersDao.findByLogin("admin").size() == 0) {
+            users.put("admin", new User("admin", "admin"));
+            usersDao.insert(new User("admin", "admin"));
+            log.info("New user '{}' registered", "admin");
+        }
         tokenStorage = new TokenStorage();
         tokenStorage.add("admin", new Token(1L));
     }

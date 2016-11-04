@@ -8,6 +8,7 @@ import server.servlets.users_data.User;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by s.rybalkin on 17.10.2016.
@@ -17,14 +18,14 @@ public class UsersDao implements Dao<User> {
 
     @Override
     public List<User> getAll() {
-        return Database.selectTransactional(session -> session.createQuery("from Users").list());
+        return Database.selectTransactional(session -> session.createQuery("from User").list());
     }
 
 
     @Override
     public List<User> getAllWhere(String ... hqlConditions) {
         String totalCondition = Joiner.on(" and ").join(Arrays.asList(hqlConditions));
-        return Database.selectTransactional(session ->session.createQuery("from Users where " + totalCondition).list());
+        return Database.selectTransactional(session ->session.createQuery("from User where " + totalCondition).list());
     }
 
     @Override
@@ -34,6 +35,10 @@ public class UsersDao implements Dao<User> {
         } catch (HibernateException e){
             e.printStackTrace();
         }
+    }
+
+    public List<User> findByLogin(String login) {
+        return getAllWhere(String.format("login='%s'", login));
     }
 
 }
