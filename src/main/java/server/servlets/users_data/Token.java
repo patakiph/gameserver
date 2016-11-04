@@ -1,24 +1,38 @@
 package server.servlets.users_data;
 
+import javax.persistence.*;
 import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by Ольга on 23.10.2016.
  */
+@Entity
+@Table(name = "TOKEN")
 public class Token {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+    @Column(name = "tokenLong")
     private Long token;
+    @Column(name = "dateTokin")
     private Date date = new Date();
 
+    public Token(){}
     public Token(Long token){
         this.token = token;
     }
 
+    public int getId(){return id;};
+    public void setId(int id){this.id = id;}
     public Long getToken(){
         return this.token;
     }
     public Date getDate(){
         return this.date;
+    }
+    public void setDate(Date date){
+        this.date = date;
     }
     public void setToken(Long token){
         this.token = token;

@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TokenStorage {
     private ConcurrentHashMap<String, Token> loginToken;
-  //  private ConcurrentHashMap<Token, User> tokenUser;
     private ConcurrentHashMap<String, String> loginTokenLong;
     private ConcurrentHashMap<Token, String> tokenLogin;
 
@@ -17,7 +16,6 @@ public class TokenStorage {
         loginToken = new ConcurrentHashMap<>();
         loginTokenLong = new ConcurrentHashMap<>();
         tokenLogin = new ConcurrentHashMap<>();
-   //     tokenUser = new ConcurrentHashMap<>();
     }
 
     public Token getToken(String login){
@@ -36,20 +34,17 @@ public class TokenStorage {
     public String getLogin(Token token){
         return tokenLogin.get(token);
     }
- //   public User getUser(Token token){
- //       return tokenUser.get(token);
- //   }
+
     public void add(String login, Token token){
         loginToken.put(login,token);
         tokenLogin.put(token,login);
         loginTokenLong.put(login,token.toString());
-      //  tokenUser.put(token,new User(login,password));
+
     }
     public void remove(Token token){
         String login = this.getLogin(token);
         tokenLogin.remove(token);
         loginToken.remove(login);
- //       tokenUser.remove(token);
     }
     public boolean containsToken(Token token){
         if (this.tokenLogin.containsKey(token))
