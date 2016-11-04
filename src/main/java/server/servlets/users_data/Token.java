@@ -1,12 +1,18 @@
 package server.servlets.users_data;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by Ольга on 23.10.2016.
  */
-public class Token {
+@Entity
+public class Token implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
     private Long token;
     private Date date = new Date();
 

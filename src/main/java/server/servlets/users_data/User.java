@@ -1,18 +1,30 @@
 package server.servlets.users_data;
 
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Ольга on 23.10.2016.
  */
-public class User {
+@Entity
+@Table(name = "users")
+public class User implements Serializable {
     private String login;
-    private String id;
-    private Date registration_date = new Date(); // ! не предоставлять api для изменения даты регистрации !
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+    @Column(name = "date")
+    private Date registrationDate; // ! не предоставлять api для изменения даты регистрации !
+    @Column(name = "name")
     private String name = "no_name";
+    @Column(nullable = true, name = "email")
     private String email;
+    @Column(name = "password")
     private String password;
+    @Column(nullable = true, name = "token")
     private Token token;
 
     public User(String login, String email, String password, Token token) {
@@ -20,14 +32,19 @@ public class User {
         this.email = email;
         this.password = password;
         this.token = token;
+        registrationDate = new Date();
     }
     public User(String login, String password) {
         this.login = login;
         this.password = password;
         this.name = login;
+        registrationDate = new Date();
     }
     public String getLogin() {
         return login;
+    }
+    public int getId() {
+        return id;
     }
 
     public void setLogin(String login) {
@@ -39,6 +56,9 @@ public class User {
     }
     public String getName() {
         return name;
+    }
+    public Date getRegistrationDate(){
+        return registrationDate;
     }
     public void setEmail(String email) {
         this.email = email;
@@ -73,6 +93,18 @@ public class User {
         if (!(u instanceof User))return false;
         User user = (User) u;
         return this.login.equals(user.getLogin());
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", login=" + login +
+                ", name='" + name + '\'' +
+                ", registration date=" + registrationDate +
+                ", email=" + email +
+                ", token=" + token +
+                '}';
     }
 }
 
