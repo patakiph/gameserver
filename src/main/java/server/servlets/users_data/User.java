@@ -23,20 +23,20 @@ public class User {
     private String email;
     @Column(name = "password")
     private String password;
-    @OneToOne(cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
-    private Token token;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name="token")
+//    private Token token;
 
 
     public User() {
     }
 
-    public User(String login, String email, String password, Token token) {
-        this.login = login;
-        this.email = email;
-        this.password = password;
-        this.token = token;
-    }
+//    public User(String login, String email, String password, Token token) {
+//        this.login = login;
+//        this.email = email;
+//        this.password = password;
+//        this.token = token;
+//    }
 
     public User(String login, String password) {
         this.login = login;
@@ -82,13 +82,13 @@ public class User {
         this.password = password;
     }
 
-    public Token getToken() {
-        return token;
-    }
-
-    public void setToken(Token token) {
-        this.token = token;
-    }
+//    public Token getToken() {
+//        return token;
+//    }
+//
+//    public void setToken(Token token) {
+//        this.token = token;
+//    }
 
     @Override
     public int hashCode() {

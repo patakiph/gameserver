@@ -15,6 +15,9 @@ public class Token {
     private int id;
     @Column(name = "tokenLong")
     private Long token;
+    @OneToOne(mappedBy = "token")
+    private User user;
+
     @Column(name = "dateTokin")
     private Date date = new Date();
 
@@ -22,6 +25,9 @@ public class Token {
     public Token(Long token){
         this.token = token;
     }
+
+    public User getUser() {return this.user;}
+    public void setUser(User user) {this.user = user;}
 
     public int getId(){return id;};
     public void setId(int id){this.id = id;}

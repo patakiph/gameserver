@@ -43,7 +43,7 @@ public class AuthenticationServlet {
         }
 
         usersDAO.insert(new User(user,password));
-       // usersDAO.getAll();
+        usersDAO.getAll();
         log.info("New user '{}' registered", user);
         return Response.ok("User " + user + " registered.").build();
     }

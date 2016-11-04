@@ -16,7 +16,7 @@ public class UsersDAO implements Dao<User> {
 
     @Override
     public List<User> getAll() {
-        return Database.selectTransactional(session -> session.createQuery("from USER").list());
+        return Database.selectTransactional(session -> session.createQuery("SELECT from USER").list());
 
     }
 
