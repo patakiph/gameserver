@@ -1,6 +1,7 @@
 package server.servlets.users_data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -8,26 +9,21 @@ import java.util.Date;
  * Created by Ольга on 23.10.2016.
  */
 @Entity
-@Table(name = "TOKEN")
-public class Token {
+@Table(name = "Token")
+public class Token implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @Column(name = "tokenLong")
     private Long token;
-    @OneToOne(mappedBy = "token")
-    private User user;
 
-    @Column(name = "dateTokin")
     private Date date = new Date();
 
-    public Token(){}
+ //   public Token(){}
     public Token(Long token){
         this.token = token;
     }
 
-    public User getUser() {return this.user;}
-    public void setUser(User user) {this.user = user;}
+
 
     public int getId(){return id;};
     public void setId(int id){this.id = id;}

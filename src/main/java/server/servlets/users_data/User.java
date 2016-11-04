@@ -2,14 +2,15 @@ package server.servlets.users_data;
 
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Ольга on 23.10.2016.
  */
 @Entity
-@Table(name = "USER")
-public class User {
+@Table(name = "User")
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -23,9 +24,8 @@ public class User {
     private String email;
     @Column(name = "password")
     private String password;
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name="token")
-//    private Token token;
+    @Column(nullable = true, name = "token")
+    private Token token;
 
 
     public User() {
