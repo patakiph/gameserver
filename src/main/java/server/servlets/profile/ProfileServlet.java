@@ -8,6 +8,8 @@ import javax.ws.rs.Path;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Request;
+import server.dao.TokensDAO;
+import server.dao.UsersDAO;
 import server.servlets.auth.Authorized;
 import server.servlets.users_data.Token;
 import server.servlets.users_data.User;
@@ -28,12 +30,17 @@ import static server.servlets.auth.AuthenticationServlet.*;
 @Path("/profile")
 public class ProfileServlet {
     private static final Logger log = LogManager.getLogger(ProfileServlet.class);
+    private static UsersDAO usersDAO = new UsersDAO();
+    private static TokensDAO tokensDAO = new TokensDAO();
     @POST
     @Path("name")
     @Authorized
     @Consumes("application/x-www-form-urlencoded")
     @Produces("text/plain")
-    public Response changeName(@FormParam("name") String name, ContainerRequestContext requestContext) { //вот тут как фильтр применить
+    public Response changeName( ContainerRequestContext requestContext, @FormParam("name") String name,
+                                @FormParam("email") String email,
+                                @FormParam("password") String password,
+                                @FormParam("login") String login) {
 
         // Get the HTTP Authorization header from the request
         String authorizationHeader =
@@ -49,22 +56,23 @@ public class ProfileServlet {
         if (token == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-//        if (getUsers().containsKey(name)) {
-//            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
-//        }
-            String login  = getTokens().getLogin(new Token(Long.parseLong(token)));
-            User user = getUsers().get(login);
-            String oldName = user.getName();
+
+        User user = tokensDAO.getAllWhere("token=" + token).get(0).getUser();
+        String oldName = user.getName();
+        if (name != null)
             user.setName(name);
-            getUsers().remove(login);
-            getUsers().put(login,user);
-//            getTokens().remove(new Token(Long.parseLong(token)));
-//            getTokens().add(name, new Token(Long.parseLong(token)));
-//            String password = getUsers().get(oldName).getPassword();
-//            getUsers().put(name,new User(name,password));
-//            getUsers().remove(oldName);
+        if (email != null)
+            user.setEmail(email);
+        if (password != null)
+            user.setPassword(password);
+        if (login != null){
+            if (usersDAO.findByLogin(login).size()==0)
+            user.setLogin(login);
+        }
+        usersDAO.update(user);
         log.info("User '{}' changed his name to '{}'", oldName, name);
         return Response.ok("User " + oldName + " changed his name to " + name).build();
 
     }
+
 }

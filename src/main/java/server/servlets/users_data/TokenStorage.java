@@ -42,6 +42,12 @@ public class TokenStorage {
         loginToken.put(login,token);
         tokenLogin.put(token,login);
         loginTokenLong.put(login,token.toString());
+<<<<<<< HEAD
+||||||| merged common ancestors
+      //  tokenUser.put(token,new User(login,password));
+=======
+
+>>>>>>> new
     }
     public void remove(Token token){
         String login = this.getLogin(token);
