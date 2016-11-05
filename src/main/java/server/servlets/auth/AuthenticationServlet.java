@@ -33,6 +33,7 @@ public class AuthenticationServlet {
     @Produces("text/plain")
     public Response register(@FormParam("user") String user,
                              @FormParam("password") String password) {
+        System.out.println(usersDAO.getAll());
 
         if (user == null || password == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -46,7 +47,7 @@ public class AuthenticationServlet {
                         System.out.println("User " + user + " already exists");
                     }
         usersDAO.insert(new User(user,password));
-        usersDAO.getAll();
+
         log.info("New user '{}' registered", user);
         return Response.ok("User " + user + " registered.").build();
     }
@@ -75,7 +76,7 @@ public class AuthenticationServlet {
     @Produces("text/plain")
     public Response authenticateUser(@FormParam("user") String user,
                                      @FormParam("password") String password) {
-
+        System.out.println(usersDAO.getAll());
         if (user == null || password == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -98,32 +99,53 @@ public class AuthenticationServlet {
         }
     }
 
+//    private boolean authenticate(String user, String password) throws Exception {
+//        return password.equals(users.get(user).getPassword());
+//    }
     private boolean authenticate(String user, String password) throws Exception {
-        return password.equals(users.get(user).getPassword());
+        String pwd = null;
+        if (usersDAO.findByLogin(user).size() > 0){
+            pwd = usersDAO.findByLogin(user).get(0).getPassword();
+        }
+        return password.equals(pwd);
     }
-
+//    private Long issueToken(String user) {
+//        Long token = null;
+//        if (tokenStorage.getToken(user) != null)
+//            token = tokenStorage.getToken(user).getToken();
+//        if (token != null) {
+//            return token;
+//        }
+//
+//        token = ThreadLocalRandom.current().nextLong();
+//        tokenStorage.add(user, new Token(token));
+////        tokensReversed.put(token, user);
+//        return token;
+//    }
     private Long issueToken(String user) {
         Long token = null;
-        if (tokenStorage.getToken(user) != null)
-            token = tokenStorage.getToken(user).getToken();
+        if (usersDAO.findByLogin(user).get(0)!=null)
+       if (usersDAO.findByLogin(user).get(0).getToken()!=null){
+           token = usersDAO.findByLogin(user).get(0).getToken().getToken();
+       }
         if (token != null) {
             return token;
         }
 
         token = ThreadLocalRandom.current().nextLong();
-        tokenStorage.add(user, new Token(token));
-//        tokensReversed.put(token, user);
+        usersDAO.updateToken(user,new Token(token));
         return token;
     }
-
     static void validateToken(String rawToken) throws Exception {
         Long token = Long.parseLong(rawToken);
-        if (!tokenStorage.containsToken(new Token(token)))
+        System.out.println(usersDAO.getAll());
+        System.out.println(usersDAO.getAllWhere("token LIKE " + "\'"+ token + "\'"));
+        if (usersDAO.getAllWhere("token LIKE " + "\'"+ token + "\'").size() <= 0)
             throw new Exception("Token validation exception");
-//        if (!tokensReversed.containsKey(token)) {
-//            throw new Exception("Token validation exception");
-//        }
-        log.info("Correct token from '{}'", tokenStorage.getLogin(new Token(token)));
+
+        log.info("Correct token from '{}'", usersDAO
+                .getAllWhere("token=" + "\'"+ token + "\'")
+                .get(0).getLogin());
     }
 
     @POST
@@ -132,6 +154,7 @@ public class AuthenticationServlet {
     @Produces("text/plain")
     public Response logout(ContainerRequestContext requestContext) { //вот тут как фильтр применить
 
+        System.out.println(usersDAO.getAll());
         // Get the HTTP Authorization header from the request
         String authorizationHeader =
                 requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
@@ -146,8 +169,13 @@ public class AuthenticationServlet {
         if (token == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        String user = tokenStorage.getLogin(new Token((Long.parseLong(token))));
-        tokenStorage.remove(new Token((Long.parseLong(token))));
+       // String user = tokenStorage.getLogin(new Token((Long.parseLong(token))));
+        System.out.println(usersDAO.getAll());
+        User user = null;
+         if (usersDAO.getAllWhere("token LIKE " + "\'"+ Long.parseLong(token) + "\'").size() > 0)
+        {user = usersDAO.getAllWhere("token LIKE " + "\'"+ Long.parseLong(token)+ "\'").get(0); }
+  //      tokenStorage.remove(new Token((Long.parseLong(token))));
+        usersDAO.updateToken(user.getLogin(),null);
         log.info("User '{}' logged out", user);
         return Response.ok("User " + user + " logged out.").build();
 

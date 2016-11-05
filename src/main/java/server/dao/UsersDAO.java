@@ -4,6 +4,8 @@ import jersey.repackaged.com.google.common.base.Joiner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import server.servlets.users_data.Token;
 import server.servlets.users_data.User;
 
 import java.util.Arrays;
@@ -37,6 +39,21 @@ public class UsersDAO implements Dao<User> {
                         e.printStackTrace();
                     }
     }
+
+    @Override
+    public void updateToken(String login, Token token){
+        List<User> users =  getAllWhere(String.format("login='%s'", login));
+        User user = users.get(0);
+        user.setToken(token);
+        try {
+            Database.updateTransactional(user);
+        } catch (HibernateException e){
+            e.printStackTrace();
+        }
+
+    }
+
+
     public List<User> findByLogin(String login) {
                return getAllWhere(String.format("login='%s'", login));
            }

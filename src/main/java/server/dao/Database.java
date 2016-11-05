@@ -22,10 +22,10 @@ public class Database {
     private static final SessionFactory sessionFactory;
 
     static {
-        try{
+        try {
             sessionFactory = new Configuration().configure()
                     .buildSessionFactory();
-        }catch (Throwable ex) {
+        } catch (Throwable ex) {
             System.err.println("Failed to create sessionFactory object." + ex);
             throw new ExceptionInInitializerError(ex);
         }
@@ -57,14 +57,28 @@ public class Database {
             f.apply(session);
             txn.commit();
         } catch (HibernateException e) {
-            if (txn!=null) txn.rollback();
+            if (txn != null) txn.rollback();
             e.printStackTrace();
         }
     }
+
+    static <T> void updateTransactional(T t) {
+        Transaction txn = null;
+        try (Session session = Database.openSession()) {
+            txn = session.beginTransaction();
+            session.update(t);
+            txn.commit();
+        } catch (HibernateException e) {
+            if (txn != null) txn.rollback();
+            e.printStackTrace();
+        }
+    }
+
 
     static Session openSession() {
         return sessionFactory.openSession();
     }
 
-    private Database() { }
+    private Database() {
+    }
 }

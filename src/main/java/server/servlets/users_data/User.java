@@ -9,7 +9,7 @@ import java.util.Date;
  * Created by Ольга on 23.10.2016.
  */
 @Entity
-@Table(name = "User")
+@Table(name = "users")
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,10 +44,19 @@ public class User implements Serializable {
         this.name = login;
     }
 
-    public int getId(){return id;};
-    public void setId(int id){this.id = id;}
+    public int getId() {
+        return id;
+    }
 
-    public Date getDate(){return this.registrationDate;}
+    ;
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Date getDate() {
+        return this.registrationDate;
+    }
 
 
     public String getLogin() {
@@ -82,13 +91,13 @@ public class User implements Serializable {
         this.password = password;
     }
 
-//    public Token getToken() {
-//        return token;
-//    }
-//
-//    public void setToken(Token token) {
-//        this.token = token;
-//    }
+    public Token getToken() {
+        return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
+    }
 
     @Override
     public int hashCode() {
@@ -102,6 +111,18 @@ public class User implements Serializable {
         if (!(u instanceof User)) return false;
         User user = (User) u;
         return this.login.equals(user.getLogin());
+    }
+
+    @Override
+    public String toString() {
+        String str = "id = " + id +
+                "; login = " + login +
+                "; password = " + password +
+                "; token = " + token +
+                "; email = " + email +
+                "; name = " + name +
+                "; reg date = " + registrationDate;
+        return str;
     }
 }
 

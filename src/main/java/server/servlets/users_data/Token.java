@@ -9,7 +9,7 @@ import java.util.Date;
  * Created by Ольга on 23.10.2016.
  */
 @Entity
-@Table(name = "Token")
+@Table(name = "token")
 public class Token implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

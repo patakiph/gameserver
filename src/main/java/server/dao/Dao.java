@@ -1,5 +1,7 @@
 package server.dao;
 
+import server.servlets.users_data.Token;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +27,7 @@ public interface Dao<T> {
      * @param t
      */
     void insert(T t);
-
+    void updateToken(String login, Token t);
     /**
      * SELECT * from ... WHERE id=
      * @param id
