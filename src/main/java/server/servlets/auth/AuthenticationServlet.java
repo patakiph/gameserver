@@ -2,8 +2,10 @@ package server.servlets.auth;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import server.dao.LeaderboardDao;
 import server.dao.TokensDAO;
 import server.dao.UsersDAO;
+import server.servlets.users_data.Leaderboard;
 import server.servlets.users_data.Token;
 import server.servlets.users_data.User;
 
@@ -22,6 +24,7 @@ public class AuthenticationServlet {
     private static final Logger log = LogManager.getLogger(AuthenticationServlet.class);
     private static UsersDAO usersDAO = new UsersDAO();
     private static TokensDAO tokensDAO = new TokensDAO();
+    private static LeaderboardDao leaderboardDao = new LeaderboardDao();
 
     // curl -i -X POST -H "Content-Type: application/x-www-form-urlencoded" -H "Host: {IP}:8080" -d "login={}&password={}" "{IP}:8080/auth/register"
     @POST
@@ -44,9 +47,16 @@ public class AuthenticationServlet {
         }
         Token tmp = new Token();
         User usr = new User(user, password);
+
         tmp.setUser(usr);
         usr.setToken(tmp);
         usersDAO.insert(usr);
+
+        Leaderboard ldb = new Leaderboard();
+        ldb.setScore(0);
+        int user_id = usersDAO.findByLogin(user).get(0).getId();
+        ldb.setUser(user_id);
+leaderboardDao.insert(ldb);
         System.out.println(usersDAO.getAll());
         System.out.println(tokensDAO.getAll());
         log.info("New user '{}' registered", user);
@@ -58,11 +68,11 @@ public class AuthenticationServlet {
         Token adminToken = new Token(1L);
         admin.setToken(adminToken);
         adminToken.setUser(admin);
-        if (usersDAO.findByLogin("admin").size() == 0) {
+     //   if (usersDAO.findByLogin("admin") ==null || usersDAO.findByLogin("admin").size() == 0) {
             usersDAO.insert(admin);
             tokensDAO.insert(adminToken);
             log.info("New user '{}' registered", "admin");
-        }
+   //     }
 
 
     }

@@ -7,8 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.layout.StringBuilderEncoder;
 import org.json.JSONObject;
+import server.dao.LeaderboardDao;
 import server.dao.TokensDAO;
 import server.dao.UsersDAO;
+import server.servlets.users_data.Leaderboard;
 import server.servlets.users_data.User;
 
 
@@ -29,6 +31,7 @@ public class DataServlet {
     private static final Logger log = LogManager.getLogger(DataServlet.class);
     private static TokensDAO tokensDAO = new TokensDAO();
     private static UsersDAO usersDAO = new UsersDAO();
+    private LeaderboardDao leaderboardDao = new LeaderboardDao();
 
     @GET
     @Path("users")
@@ -48,6 +51,18 @@ public class DataServlet {
         str.deleteCharAt(str.length() - 1);
         str.append(" ] }");
         String s = new String(str);
+        log.info(s);
+        Gson gson = new Gson();
+        JsonObject obj = new JsonParser().parse(s).getAsJsonObject();
+        return Response.ok(gson.toJson(obj)).build();
+    }
+
+    @GET
+    @Path("leaderboard")
+    @Produces("application/json")
+    public Response getLeaderboard() { //вот тут как фильтр применить
+        List<Leaderboard> users = LeaderboardDao.getAll();
+        String s = users.toString();
         log.info(s);
         Gson gson = new Gson();
         JsonObject obj = new JsonParser().parse(s).getAsJsonObject();

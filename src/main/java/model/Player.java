@@ -28,6 +28,7 @@ public class Player{
   private int coins = 0;
   private int XP = 0;
   private int topPosition;
+  private int score;
   private int foodEaten = 0;
   private Team team;
   private int room;
