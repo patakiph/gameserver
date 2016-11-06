@@ -56,7 +56,8 @@ public class AuthenticationServlet {
         ldb.setScore(0);
         int user_id = usersDAO.findByLogin(user).get(0).getId();
         ldb.setUser(user_id);
-leaderboardDao.insert(ldb);
+        leaderboardDao.insert(ldb);
+        System.out.println(leaderboardDao.getAll());
         System.out.println(usersDAO.getAll());
         System.out.println(tokensDAO.getAll());
         log.info("New user '{}' registered", user);
@@ -68,49 +69,49 @@ leaderboardDao.insert(ldb);
         Token adminToken = new Token(1L);
         admin.setToken(adminToken);
         adminToken.setUser(admin);
-     //   if (usersDAO.findByLogin("admin") ==null || usersDAO.findByLogin("admin").size() == 0) {
+        if (usersDAO.findByLogin("admin").size() == 0) {
             usersDAO.insert(admin);
             tokensDAO.insert(adminToken);
             log.info("New user '{}' registered", "admin");
-   //     }
+                }
 
 
-    }
-
-    // curl -X POST
-    //      -H "Content-Type: application/x-www-form-urlencoded"
-    //      -H "Host: localhost:8080"
-    //      -d "login=admin&password=admin"
-    // "http://localhost:8080/auth/login"
-    @POST
-    @Path("login")
-    @Consumes("application/x-www-form-urlencoded")
-    @Produces("text/plain")
-    public Response authenticateUser(@FormParam("user") String user,
-                                     @FormParam("password") String password) {
-
-        if (user == null || password == null) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        try {
-            // Authenticate the user using the credentials provided
-            if (!authenticate(user, password)) {
-                return Response.status(Response.Status.UNAUTHORIZED).build();
+        // curl -X POST
+        //      -H "Content-Type: application/x-www-form-urlencoded"
+        //      -H "Host: localhost:8080"
+        //      -d "login=admin&password=admin"
+        // "http://localhost:8080/auth/login"
+        @POST
+        @Path("login")
+        @Consumes("application/x-www-form-urlencoded")
+        @Produces("text/plain")
+        public Response authenticateUser (@FormParam("user") String user,
+                @FormParam("password") String password){
+
+            if (user == null || password == null) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
             }
 
-            User usr = usersDAO.findByLogin(user).get(0);
-            // Issue a token for the user
-            long token = issueToken(usr);
-            log.info("User '{}' logged in", user);
+            try {
+                // Authenticate the user using the credentials provided
+                if (!authenticate(user, password)) {
+                    return Response.status(Response.Status.UNAUTHORIZED).build();
+                }
 
-            // Return the token on the response
-            return Response.ok(Long.toString(token)).build();
+                User usr = usersDAO.findByLogin(user).get(0);
+                // Issue a token for the user
+                long token = issueToken(usr);
+                log.info("User '{}' logged in", user);
 
-        } catch (Exception e) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+                // Return the token on the response
+                return Response.ok(Long.toString(token)).build();
+
+            } catch (Exception e) {
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
         }
-    }
 
     private boolean authenticate(String user, String password) throws Exception {
         String pwd = null;

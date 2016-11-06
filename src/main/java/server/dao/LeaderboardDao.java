@@ -68,11 +68,12 @@ public class LeaderboardDao  {
 
     public static void insert(Leaderboard person) {
         StringBuffer INSERT = new StringBuffer();
-        INSERT.append("INSERT INTO leaderboard (id, user_id, score) " + "VALUES" + "(" +
-                person.getId() + "," + person.getUser() + "," + person.getScore() + ");");
+        INSERT.append("INSERT INTO leaderboard (user_id, score) " + "VALUES" + "(" +
+                person.getUser() + ", " + person.getScore() + ");");
+        System.out.println(INSERT);
         try (Connection con = DbConnector.getConnection();
              Statement stm = con.createStatement()) {
-            stm.executeQuery(INSERT.toString());
+            stm.executeUpdate(INSERT.toString());
         } catch (SQLException e) {
             log.error("Failed to insert.", e);
         }
@@ -84,14 +85,13 @@ public class LeaderboardDao  {
                 person.getScore() +"WHERE user_id=" +person.getUser()+ ");");
         try (Connection con = DbConnector.getConnection();
              Statement stm = con.createStatement()) {
-            stm.executeQuery(UPDATE.toString());
+            stm.executeUpdate(UPDATE.toString());
         } catch (SQLException e) {
             log.error("Failed to update.", e);
         }
     }
     private static Leaderboard mapToLeaderboard(ResultSet rs) throws SQLException {
         return new Leaderboard()
-                .setId(rs.getInt("id"))
                 .setUser(rs.getInt("user_id"))
                 .setScore(rs.getInt("score"));
 

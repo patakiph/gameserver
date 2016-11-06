@@ -9,7 +9,7 @@ import java.io.IOException;
  * Created by Ольга on 06.11.2016.
  */
 public class Leaderboard {
-    private int id;
+
     private int user_id;
     private int score;
 
@@ -27,14 +27,7 @@ public class Leaderboard {
 
     public Leaderboard() {
     }
-    public int getId() {
-        return id;
-    }
 
-    public Leaderboard setId(int id) {
-        this.id = id;
-        return this;
-    }
     public int getUser() {
         return this.user_id;
     }
@@ -60,7 +53,7 @@ public class Leaderboard {
 
         Leaderboard person = (Leaderboard) o;
 
-        if (id != person.id) return false;
+        if (user_id != person.user_id) return false;
         if (score != person.score) return false;
         return user_id != 0 ? (user_id == person.user_id) : person.user_id == 0;
 
@@ -68,9 +61,15 @@ public class Leaderboard {
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = user_id;
         result = 31 * result + score;
         result = 31 * result + (user_id == 0 ? user_id : 0);
         return result;
+    }
+
+    @Override
+    public String toString(){
+        String str = "user_id=" + user_id + "; score=" +score;
+        return str;
     }
 }
