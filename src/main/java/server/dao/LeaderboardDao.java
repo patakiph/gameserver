@@ -25,10 +25,9 @@ public class LeaderboardDao  {
             "SELECT * FROM leaderboard;";
     private static final String INSERT_PERSON =
             "INSERT INTO leaderboard (id, user_id, score) VALUES(%d,%d,%d);";
-private static final String CREATE_TABLE ="CREATE TABLE IF NOT EXISTS leaderboard\n" +
-        "(\n" +
-        "    user_id INTEGER PRIMARY KEY  NOT NULL,\n" +
-        "    score INTEGER            NOT NULL\n" +
+private static final String CREATE_TABLE ="CREATE TABLE IF NOT EXISTS leaderboard" +
+        " (user_id INTEGER PRIMARY KEY NOT NULL, " +
+        " score INTEGER NOT NULL" +
         ");";
     private static final String SELECT_TOP = "SELECT * FROM leaderboard order by score limit %d;";
 
@@ -51,7 +50,7 @@ private static final String CREATE_TABLE ="CREATE TABLE IF NOT EXISTS leaderboar
 
     public static List<Leaderboard> getTop(int N) {
         String SELECT_TOP_1 = new String("SELECT leaderboard.user_id as user_id, users.login as login, leaderboard.score " +
-                "as score FROM leaderboard LEFT OUTER JOIN users ON users.id = leaderboard.user_id ORDER BY score LIMIT " + N + ";");
+                "as score FROM leaderboard LEFT OUTER JOIN users ON users.id = leaderboard.user_id ORDER BY score DESC LIMIT " + N + ";");
         List<Leaderboard> persons = new ArrayList<>();
         try (Connection con = DbConnector.getConnection();
              Statement stm = con.createStatement()) {
@@ -100,11 +99,20 @@ private static final String CREATE_TABLE ="CREATE TABLE IF NOT EXISTS leaderboar
             log.error("Failed to insert.", e);
         }
     }
-
+    public static void createTable() {
+        try (Connection con = DbConnector.getConnection();
+             Statement stm = con.createStatement()) {
+            System.out.println(CREATE_TABLE);
+            stm.executeUpdate(CREATE_TABLE);
+        } catch (SQLException e) {
+            log.error("Failed to insert.", e);
+        }
+    }
     public static void update(Leaderboard person) {
         StringBuffer UPDATE = new StringBuffer();
         UPDATE.append("UPDATE leaderboard set " + "score=" +
-                person.getScore() +"WHERE user_id=" +person.getUser()+ ");");
+                person.getScore() +" WHERE user_id=" +person.getUser()+ ";");
+        System.out.println(UPDATE);
         try (Connection con = DbConnector.getConnection();
              Statement stm = con.createStatement()) {
             stm.executeUpdate(UPDATE.toString());
