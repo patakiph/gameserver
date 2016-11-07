@@ -25,6 +25,12 @@ public class LeaderboardDao  {
             "SELECT * FROM leaderboard;";
     private static final String INSERT_PERSON =
             "INSERT INTO leaderboard (id, user_id, score) VALUES(%d,%d,%d);";
+private static final String CREATE_TABLE ="CREATE TABLE IF NOT EXISTS leaderboard\n" +
+        "(\n" +
+        "    user_id INTEGER PRIMARY KEY  NOT NULL,\n" +
+        "    score INTEGER            NOT NULL\n" +
+        ");";
+    private static final String SELECT_TOP = "SELECT * FROM leaderboard order by score limit %d;";
 
     public static List<Leaderboard> getAll() {
         List<Leaderboard> persons = new ArrayList<>();
@@ -43,6 +49,22 @@ public class LeaderboardDao  {
     }
 
 
+    public static List<Leaderboard> getTop(int N) {
+        String SELECT_TOP_1 = new String("SELECT leaderboard.user_id as user_id, users.login as login, leaderboard.score " +
+                "as score FROM leaderboard LEFT OUTER JOIN users ON users.id = leaderboard.user_id ORDER BY score LIMIT " + N + ";");
+        List<Leaderboard> persons = new ArrayList<>();
+        try (Connection con = DbConnector.getConnection();
+             Statement stm = con.createStatement()) {
+            ResultSet rs = stm.executeQuery(SELECT_TOP_1);
+            while (rs.next()) {
+                persons.add(mapToLeaderboard2(rs));
+            }
+        } catch (SQLException e) {
+            log.error("Failed to Top.", e);
+            return Collections.emptyList();
+        }
+        return persons;
+    }
 
     public static List<Leaderboard> getAllWhere(String ... conditions) {
         StringBuffer SELECT_ALL_PERSONS_1 = new StringBuffer("SELECT * FROM leaderboard WHERE ");
@@ -90,10 +112,18 @@ public class LeaderboardDao  {
             log.error("Failed to update.", e);
         }
     }
+
     private static Leaderboard mapToLeaderboard(ResultSet rs) throws SQLException {
         return new Leaderboard()
                 .setUser(rs.getInt("user_id"))
                 .setScore(rs.getInt("score"));
 
+    }
+
+    private static Leaderboard mapToLeaderboard2(ResultSet rs) throws SQLException {
+        return new Leaderboard()
+                .setUser(rs.getInt("user_id"))
+                .setScore(rs.getInt("score"))
+                .setLogin(rs.getString("login"));
     }
 }

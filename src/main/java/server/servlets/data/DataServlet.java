@@ -18,6 +18,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -60,12 +61,12 @@ public class DataServlet {
     @GET
     @Path("leaderboard")
     @Produces("application/json")
-    public Response getLeaderboard() { //вот тут как фильтр применить
-        List<Leaderboard> users = LeaderboardDao.getAll();
-        String s = users.toString();
-        log.info(s);
-        Gson gson = new Gson();
-        JsonObject obj = new JsonParser().parse(s).getAsJsonObject();
-        return Response.ok(gson.toJson(obj)).build();
+    public Response getLeaderboard(@QueryParam("n") int N) { //вот тут как фильтр применить
+        List<Leaderboard> users = LeaderboardDao.getTop(N);
+        HashMap<String, List<Leaderboard>> json = new HashMap<>();
+        json.put("leaderboard",users);
+        log.info(users.toString());
+        String jsonStr = new Gson().toJson(json);
+        return Response.ok(jsonStr).build();
     }
 }

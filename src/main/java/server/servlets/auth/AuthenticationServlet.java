@@ -55,6 +55,7 @@ public class AuthenticationServlet {
         Leaderboard ldb = new Leaderboard();
         ldb.setScore(0);
         int user_id = usersDAO.findByLogin(user).get(0).getId();
+        ldb.setLogin(user);
         ldb.setUser(user_id);
         leaderboardDao.insert(ldb);
         System.out.println(leaderboardDao.getAll());

@@ -11,6 +11,7 @@ import java.io.IOException;
 public class Leaderboard {
 
     private int user_id;
+    private String login;
     private int score;
 
     private static final ObjectMapper mapper = new ObjectMapper();
@@ -37,6 +38,14 @@ public class Leaderboard {
         return this;
     }
 
+    public Leaderboard setLogin(String login){
+        this.login = login;
+        return this;
+    }
+
+    public String getLogin(){
+        return this.login;
+    }
     public int getScore() {
         return score;
     }
