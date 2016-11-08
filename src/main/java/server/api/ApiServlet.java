@@ -1,5 +1,7 @@
 package server.api;
 
+import client.RestClient;
+import client.RestClientImp;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -33,6 +35,10 @@ public class ApiServlet {
 
         try {
             jettyServer.start();
+            String user = "admin";
+            String pass = "admin";
+            RestClient client = new RestClientImp();
+            client.register(user, pass);
             jettyServer.join();
         } finally {
             jettyServer.destroy();

@@ -94,7 +94,7 @@ public class AuthServletTest {
     public void test01_testRegistrationWithExistingLogin() throws Exception {
         String user = "admin";
         String pass = "admin";
-        assertEquals(client.register(user, pass), Long.valueOf(-1));
+        assertEquals(client.register(user, pass), Long.valueOf(406));
     }
 
     @Test
