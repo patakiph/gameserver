@@ -31,7 +31,7 @@ private static final String CREATE_TABLE ="CREATE TABLE IF NOT EXISTS leaderboar
         ");";
     private static final String SELECT_TOP = "SELECT * FROM leaderboard order by score limit %d;";
 
-    public static List<Leaderboard> getAll() {
+    public List<Leaderboard> getAll() {
         List<Leaderboard> persons = new ArrayList<>();
         try (Connection con = DbConnector.getConnection();
              Statement stm = con.createStatement()) {
@@ -99,14 +99,16 @@ private static final String CREATE_TABLE ="CREATE TABLE IF NOT EXISTS leaderboar
             log.error("Failed to insert.", e);
         }
     }
-    public static void createTable() {
+    public static int createTable() {
         try (Connection con = DbConnector.getConnection();
              Statement stm = con.createStatement()) {
             System.out.println(CREATE_TABLE);
             stm.executeUpdate(CREATE_TABLE);
+            return 1;
         } catch (SQLException e) {
             log.error("Failed to insert.", e);
         }
+        return -1;
     }
     public static void update(Leaderboard person) {
         StringBuffer UPDATE = new StringBuffer();

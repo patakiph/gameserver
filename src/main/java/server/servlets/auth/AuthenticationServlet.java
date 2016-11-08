@@ -122,7 +122,7 @@ public class AuthenticationServlet {
         return password.equals(pwd);
     }
 
-    private Long issueToken(User user) {
+    public static Long issueToken(User user) {
         Long token = null;
         int usr_id = user.getId();
         if (tokensDAO.getAllWhere("frn_user_id = " + usr_id).size() > 0)
