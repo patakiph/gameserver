@@ -151,7 +151,7 @@ public class RestClientImp implements RestClient {
         String requestUrl = SERVICE_URL + "/profile/leaderboard";
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
         RequestBody body = RequestBody.
-                create(mediaType, String.format("score=%s&login=%s", score, login));
+                create(mediaType, String.format("login=%s&score=%d", login,score));
         Request request = (new Request.Builder())
                 .url(requestUrl)
                 .addHeader("content-type", "application/x-www-form-urlencoded")

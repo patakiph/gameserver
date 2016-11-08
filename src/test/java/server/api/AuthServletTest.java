@@ -9,6 +9,7 @@ import com.squareup.okhttp.Response;
 import com.squareup.okhttp.Request.Builder;
 
 import com.google.gson.reflect.*;
+
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Map;
@@ -19,7 +20,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.runners.MethodSorters;
 import org.junit.FixMethodOrder;
+
 import java.util.ArrayList;
+
 import org.junit.Assert;
 import org.junit.Test;
 import client.*;
@@ -116,7 +119,8 @@ public class AuthServletTest {
     public void test08_getAllUsers() throws Exception {
         String body = client.getAll("1");
 
-        Type listType = new TypeToken<List<parseUser>>(){}.getType();
+        Type listType = new TypeToken<List<parseUser>>() {
+        }.getType();
         Map jsonJavaRootObject = new Gson().fromJson(body, Map.class);
         List<parseUser> users = new Gson().fromJson(jsonJavaRootObject.get("users").toString(), listType);
         List<String> nameList = users.stream().map(parseUser::getName).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
@@ -135,7 +139,8 @@ public class AuthServletTest {
 
         String body = client.getAll("1");
 
-        Type listType = new TypeToken<List<parseUser>>(){}.getType();
+        Type listType = new TypeToken<List<parseUser>>() {
+        }.getType();
         Map jsonJavaRootObject = new Gson().fromJson(body, Map.class);
         List<parseUser> users = new Gson().fromJson(jsonJavaRootObject.get("users").toString(), listType);
         List<String> nameList = users.stream()
@@ -151,15 +156,24 @@ public class AuthServletTest {
     }
 
     @Test
-    public void test10_getLeaderboard() throws Exception {
-
-
+    public void test10_testLeaderoard() throws Exception {
+        client.register(NEW_USER_NAME + "_2", NEW_USER_PASS);
+        client.register(NEW_USER_NAME + "_3", NEW_USER_PASS);
+        client.register(NEW_USER_NAME + "_4", NEW_USER_PASS);
+        client.register(NEW_USER_NAME + "_5", NEW_USER_PASS);
+        client.addScore(NEW_USER_NAME + "_2", 4);
+        client.addScore(NEW_USER_NAME + "_3", 14);
+        client.addScore(NEW_USER_NAME + "_4", 7);
+        client.addScore(NEW_USER_NAME + "_5", 10);
+        String body = client.getLb(Long.valueOf(3));
+        Type listType = new TypeToken<List<parsePosition>>() {
+        }.getType();
+        Map jsonJavaRootObject = new Gson().fromJson(body, Map.class);
+        List<parsePosition> users = new Gson().fromJson(jsonJavaRootObject.get("leaderboard").toString(), listType);
+        List<String> nameList = users.stream().map(parsePosition::getLogin).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
+        List<Long> scoreList = users.stream().map(parsePosition::getScore).sorted().collect(Collectors.toList());
+        System.out.println(nameList);
+        System.out.println(scoreList); //         List<String> realOrder = Arrays.asList(NEW_USER_NAME + "_3", NEW_USER_NAME + "_5", NEW_USER_NAME + "_4");         List<Long> realScores = Arrays.asList(14L, 10L, 7L);          assertArrayEquals(realOrder.toArray(), nameList.toArray());         assertArrayEquals(realScores.toArray(), scoreList.toArray());
     }
 
-
-
     }
-
-
-
-}
