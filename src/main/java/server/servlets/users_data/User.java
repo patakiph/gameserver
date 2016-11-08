@@ -46,7 +46,8 @@ public class User implements Serializable {
     }
 
     public int getId(){return id;};
-    public void setId(int id){this.id = id;}
+    public User setId(int id){this.id = id;
+    return this;}
 
     public Date getDate(){return this.registrationDate;}
 
@@ -55,8 +56,9 @@ public class User implements Serializable {
         return login;
     }
 
-    public void setLogin(String login) {
+    public User setLogin(String login) {
         this.login = login;
+        return this;
     }
 
     public String getEmail() {
@@ -67,28 +69,32 @@ public class User implements Serializable {
         return name;
     }
 
-    public void setEmail(String email) {
+    public User setEmail(String email) {
         this.email = email;
+        return this;
     }
 
-    public void setName(String name) {
+    public User setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public User setPassword(String password) {
         this.password = password;
+        return this;
     }
 
     public Token getToken() {
         return token;
     }
 
-    public void setToken(Token token) {
+    public User setToken(Token token) {
         this.token = token;
+        return this;
     }
 
     @Override
