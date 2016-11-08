@@ -47,14 +47,14 @@ public class UsersDAO implements Dao<User> {
     public void insert(User user) {
 
         try {
-                       Database.doTransactional(session -> session.save(user));
-                    } catch (HibernateException e){
-                        e.printStackTrace();
-                    }
+            Database.doTransactional(session -> session.save(user));
+        } catch (HibernateException e){
+            e.printStackTrace();
+        }
     }
     public List<User> findByLogin(String login) {
-               return getAllWhere(String.format("login='%s'", login));
-           }
+        return getAllWhere(String.format("login='%s'", login));
+    }
 
     public void update(User user) {
 
