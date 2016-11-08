@@ -7,7 +7,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.Request.Builder;
-import com.sun.jdi.connect.Connector;
+
 import com.google.gson.reflect.*;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -15,12 +15,18 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.List;
+
+import org.junit.Before;
 import org.junit.runners.MethodSorters;
 import org.junit.FixMethodOrder;
 import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 import client.*;
+import server.dao.LeaderboardDao;
+import server.dao.TokensDAO;
+import server.dao.UsersDAO;
+
 import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -31,6 +37,7 @@ public class AuthServletTest {
     private String NEW_NEW_USER_NAME = "Elephant";
     private String NEW_USER_PASS = "SuperPass";
     private String TEST_TOKEN = "";
+    private boolean setUpDone = false;
     private RestClient client = new RestClientImp();
 
     public class parseUser {
@@ -54,12 +61,25 @@ public class AuthServletTest {
     private String getTestToken() {
         return this.TEST_TOKEN;
     }
+//@Test
+//    public void dropTables(){
+//        if (setUpDone) {
+//            return;
+//        }
+//        TokensDAO tokensDAO = new TokensDAO();
+//        UsersDAO usersDAO = new UsersDAO();
+//        LeaderboardDao leaderboardDao = new LeaderboardDao();
+//        leaderboardDao.dropTable();
+//        tokensDAO.dropTable();
+//        usersDAO.dropTable();
+//        setUpDone = true;
+//    }
 
     @Test
     public void test01_testRegistrationWithExistingLogin() throws Exception {
         String user = "admin";
         String pass = "admin";
-        assertEquals(client.register(user, pass), Long.valueOf(406));
+        assertEquals(client.register(user, pass), Long.valueOf(-1));
     }
 
     @Test

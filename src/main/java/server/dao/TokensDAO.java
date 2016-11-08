@@ -7,6 +7,9 @@ import org.hibernate.HibernateException;
 import server.servlets.users_data.Token;
 import server.servlets.users_data.User;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +18,7 @@ import java.util.List;
  */
 public class TokensDAO implements Dao<Token> {
     private static final Logger log = LogManager.getLogger(UsersDAO.class);
+    private static final String DROP_TABLE = "DROP TABLE IF EXISTS tokens;";
 
     @Override
     public List<Token> getAll() {
@@ -38,7 +42,17 @@ public class TokensDAO implements Dao<Token> {
             e.printStackTrace();
         }
     }
-
+    public static int dropTable() {
+        try (Connection con = DbConnector.getConnection();
+             Statement stm = con.createStatement()) {
+            System.out.println(DROP_TABLE);
+            stm.executeUpdate(DROP_TABLE);
+            return 1;
+        } catch (SQLException e) {
+            log.error("Failed to insert.", e);
+        }
+        return -1;
+    }
     public void delete(Token token) {
 
         try {

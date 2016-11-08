@@ -58,9 +58,9 @@ public class AuthenticationServlet {
         ldb.setLogin(user);
         ldb.setUser(user_id);
         leaderboardDao.insert(ldb);
-        System.out.println(leaderboardDao.getAll());
-        System.out.println(usersDAO.getAll());
-        System.out.println(tokensDAO.getAll());
+//        System.out.println(leaderboardDao.getAll());
+//        System.out.println(usersDAO.getAll());
+//        System.out.println(tokensDAO.getAll());
         log.info("New user '{}' registered", user);
         return Response.ok("User " + user + " registered.").build();
     }
@@ -122,7 +122,7 @@ public class AuthenticationServlet {
         return password.equals(pwd);
     }
 
-    private Long issueToken(User user) {
+    public static Long issueToken(User user) {
         Long token = null;
         int usr_id = user.getId();
         if (tokensDAO.getAllWhere("frn_user_id = " + usr_id).size() > 0)
