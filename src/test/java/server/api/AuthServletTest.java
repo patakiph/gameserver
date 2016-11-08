@@ -139,6 +139,10 @@ public class AuthServletTest {
         assertArrayEquals(nameList.toArray(), reallyExisting.toArray());
     }
 
+    @Test
+    public void test10_getLeaderboard() throws Exception {
 
+
+    }
 
 }
