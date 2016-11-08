@@ -108,7 +108,6 @@ public class ProfileServlet {
         } catch (Exception e) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-
     }
 
 }

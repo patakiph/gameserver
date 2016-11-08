@@ -86,6 +86,7 @@ public class RestClientImp implements RestClient {
         } catch (IOException e) {
             return -1L;
         }
+
     }
 
     public String getAll(String token) {
@@ -127,12 +128,41 @@ public class RestClientImp implements RestClient {
         }
     }
 
-    public String getLb(String token) {
-        return "";
+    public String getLb(Long n) {
+        OkHttpClient client = new OkHttpClient();
+        client.setReadTimeout(30, TimeUnit.SECONDS);
+        String requestUrl = SERVICE_URL + "/data/leaderboard?n=" + n.toString();
+        Request request = (new Request.Builder())
+                .url(requestUrl)
+                .addHeader("content-type", "application/x-www-form-urlencoded")
+                .get()
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            return response.body().string();
+        } catch (Exception e) {
+            return "";
+        }
     }
 
-    public String addScore(String token) {
-        return "";
+    public Long addScore(String login, Integer score) {
+        OkHttpClient client = new OkHttpClient();
+        client.setReadTimeout(30, TimeUnit.SECONDS);
+        String requestUrl = SERVICE_URL + "/profile/leaderboard";
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+        RequestBody body = RequestBody.
+                create(mediaType, String.format("score=%s&login=%s", score, login));
+        Request request = (new Request.Builder())
+                .url(requestUrl)
+                .addHeader("content-type", "application/x-www-form-urlencoded")
+                .post(body)
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            return Long.valueOf(response.code());
+        } catch (Exception e) {
+            return -1L;
+        }
     }
 
 }

@@ -12,6 +12,6 @@ public interface RestClient {
     Long logout(String token);
     String getAll(String token);
     Long changeName(String newLogin, String token);
-    //String getLb(String token);
-    String addScore(String token);
+    String getLb(Long n);
+    Long addScore(String login, Integer score);
 }

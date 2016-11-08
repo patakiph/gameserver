@@ -47,19 +47,31 @@ public class AuthServletTest {
         }
     }
 
-    private void setTestToken(String token) {
-        this.TEST_TOKEN = token;
-    }
+    public class parsePosition {
+        private String user_id;
+        private String login;
+        private Long score;
 
-    private String getTestToken() {
-        return this.TEST_TOKEN;
+        public parsePosition(String user_id, String login, Long score) {
+            this.user_id = user_id;
+            this.login = login;
+            this.score = score;
+        }
+
+        public String getLogin() {
+            return this.login;
+        }
+
+        public Long getScore() {
+            return this.score;
+        }
     }
 
     @Test
     public void test01_testRegistrationWithExistingLogin() throws Exception {
         String user = "admin";
         String pass = "admin";
-        assertEquals(client.register(user, pass), Long.valueOf(406));
+        assertEquals(client.register(user, pass), Long.valueOf(-1));
     }
 
     @Test
@@ -79,7 +91,6 @@ public class AuthServletTest {
         System.out.println(token);
         assertEquals("1", token);
     }
-
 
     @Test
     public void test08_getAllUsers() throws Exception {
@@ -117,6 +128,12 @@ public class AuthServletTest {
         reallyExisting.sort(String.CASE_INSENSITIVE_ORDER);
 
         assertArrayEquals(nameList.toArray(), reallyExisting.toArray());
+    }
+
+
+
+
+
     }
 
 
