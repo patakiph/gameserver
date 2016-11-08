@@ -1,4 +1,4 @@
-package server.servlets.auth;
+package server.api;
 
 import com.google.gson.Gson;
 import com.squareup.okhttp.MediaType;
@@ -20,6 +20,7 @@ import org.junit.FixMethodOrder;
 import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
+import client.*;
 import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -30,6 +31,7 @@ public class AuthServletTest {
     private String NEW_NEW_USER_NAME = "Elephant";
     private String NEW_USER_PASS = "SuperPass";
     private String TEST_TOKEN = "";
+    private RestClient client = new RestClientImp();
 
     public class parseUser {
         private String name;
@@ -55,229 +57,68 @@ public class AuthServletTest {
 
     @Test
     public void test01_testRegistrationWithExistingLogin() throws Exception {
-        OkHttpClient client = new OkHttpClient();
-        client.setConnectTimeout(30, TimeUnit.SECONDS);
-        client.setReadTimeout(30, TimeUnit.SECONDS);
-        client.setRetryOnConnectionFailure(true);
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody.create(
-                mediaType,
-                String.format("user=%s&password=%s", "admin", "admin")
-        );
-
-        String requestUrl = SERVICE_URL + "/auth/register";
-        Request request = (new Builder())
-                .url(requestUrl)
-                .post(body)
-                .addHeader("content-type", "application/x-www-form-urlencoded")
-                .build();
-
-        Response response = client.newCall(request).execute();
-        assertEquals(response.code(), 406);
+        String user = "admin";
+        String pass = "admin";
+        assertEquals(client.register(user, pass), Long.valueOf(406));
     }
 
     @Test
-    public void test02_testRegistrationWithoutLogin() throws Exception {
-        OkHttpClient client = new OkHttpClient();
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody.create(
-                mediaType,
-                String.format("password=%s", new Object[]{"admin"}));
-
-        String requestUrl = SERVICE_URL + "/auth/register";
-        Request request = (new Builder())
-                .url(requestUrl)
-                .post(body)
-                .addHeader("content-type", "application/x-www-form-urlencoded").build();
-        Response response = client.newCall(request).execute();
-        assertEquals(response.code(), 400);
+    public void test02_testRegistrationOfNewUser() throws Exception {
+        assertEquals(client.register(NEW_USER_NAME, NEW_USER_PASS), Long.valueOf(200));
     }
 
     @Test
-    public void test03_testRegistrationWithoutPassword() throws Exception {
-        OkHttpClient client = new OkHttpClient();
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody.
-                create(mediaType, String.format("user=%s", "admin"));
-        String requestUrl = SERVICE_URL + "/auth/register";
-        Request request = (new Builder()).
-                url(requestUrl).
-                post(body).
-                addHeader("content-type", "application/x-www-form-urlencoded").
-                build();
-        Response response = client.newCall(request).execute();
-        assertEquals(response.code(), 400);
+    public void test04_testAuthorizationOfNewUser() throws Exception {
+        String token = client.login(NEW_USER_NAME, NEW_USER_PASS);
+        assertNotEquals("", token);
     }
 
     @Test
-    public void test04_testRegistrationOfNewUser() throws Exception {
-        OkHttpClient client = new OkHttpClient();
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody.
-                create(mediaType, String.format("user=%s&password=%s", NEW_USER_NAME, NEW_USER_PASS));
-        String requestUrl = SERVICE_URL + "/auth/register";
-        Request request = (new Builder())
-                .url(requestUrl)
-                .post(body)
-                .addHeader("content-type", "application/x-www-form-urlencoded")
-                .build();
-        Response response = client.newCall(request).execute();
-        assertEquals(response.code(), 200);
-    }
-
-    @Test
-    public void test05_testAuthorizationOfNewUser() throws Exception {
-        OkHttpClient client = new OkHttpClient();
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody.
-                create(mediaType, String.format("user=%s&password=%s", NEW_USER_NAME, NEW_USER_PASS));
-        String requestUrl = SERVICE_URL + "/auth/login";
-        Request request = (new Builder())
-                .url(requestUrl)
-                .post(body)
-                .addHeader("content-type", "application/x-www-form-urlencoded")
-                .build();
-        Response response = client.newCall(request).execute();
-        String token = response.body().string();
+    public void test05_testAuthorizationAdmin() throws Exception {
+        String token = client.login("admin", "admin");
         System.out.println(token);
-        this.setTestToken(token);
-        assertEquals(response.code(), 200);
-        System.out.println(this.getTestToken());
+        assertEquals("1", token);
     }
 
-
-    @Test
-    public void test06_testAuthorizationAdmin() throws Exception {
-
-        OkHttpClient client = new OkHttpClient();
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody.
-                create(mediaType, String.format("user=%s&password=%s", "admin", "admin"));
-        String requestUrl = SERVICE_URL + "/auth/login";
-        Request request = (new Builder()).
-                url(requestUrl).post(body)
-                .addHeader("content-type", "application/x-www-form-urlencoded")
-                .build();
-        Response response = client.newCall(request).execute();
-        assertEquals(response.body().string(), "1");
-    }
-
-    @Test
-    public void test07_testAuthorizationWithIncorrectPass() throws Exception {
-        OkHttpClient client = new OkHttpClient();
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody
-                .create(mediaType, String.format("user=%s&password=%s", "admin", "ne_admin("));
-        String requestUrl = SERVICE_URL + "/auth/login";
-        Request request = (new Builder()).
-                url(requestUrl).
-                post(body).
-                addHeader("content-type", "application/x-www-form-urlencoded")
-                .build();
-        Response response = client.newCall(request).execute();
-        assertEquals(response.code(), 401);
-    }
 
     @Test
     public void test08_getAllUsers() throws Exception {
-        OkHttpClient client = new OkHttpClient();
-        client.setReadTimeout(30, TimeUnit.SECONDS);
-        String requestUrl = SERVICE_URL + "/data/users";
-        Request request = (new Builder())
-                .url(requestUrl)
-                .addHeader("content-type", "application/x-www-form-urlencoded")
-                .addHeader("Authorization", "Bearer: 1")
-                .get()
-                .build();
-        Response response = client.newCall(request).execute();
+        String body = client.getAll("1");
 
         Type listType = new TypeToken<List<parseUser>>(){}.getType();
-        Map jsonJavaRootObject = new Gson().fromJson(response.body().string(), Map.class);
+        Map jsonJavaRootObject = new Gson().fromJson(body, Map.class);
         List<parseUser> users = new Gson().fromJson(jsonJavaRootObject.get("users").toString(), listType);
         List<String> nameList = users.stream().map(parseUser::getName).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
         System.out.println(nameList);
-
         List<String> reallyExisting = Arrays.asList("admin", NEW_USER_NAME);
         reallyExisting.sort(String.CASE_INSENSITIVE_ORDER);
 
-        assertEquals(response.code(), 200);
         assertArrayEquals(nameList.toArray(), reallyExisting.toArray());
     }
 
     @Test
     public void test09_changeNameTest() throws Exception {
-        OkHttpClient client = new OkHttpClient();
-        String requestUrl = SERVICE_URL + "/profile/name";
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody.create(
-                mediaType,
-                String.format("login=%s", NEW_NEW_USER_NAME)
-        );
-        System.out.println(this.getTestToken());
-        System.out.println(getTestToken());
-        Request request = (new Builder())
-                .url(requestUrl)
-                .addHeader("content-type", "application/x-www-form-urlencoded")
-                .addHeader("Authorization", "Bearer: " + this.getTestToken())
-                .post(body)
-                .build();
-        Response response = client.newCall(request).execute();
-        assertEquals(response.code(), 200);
+        String token = client.login(NEW_USER_NAME, NEW_USER_PASS);
+        Long code = client.changeName(NEW_NEW_USER_NAME, token);
+        assertEquals(Long.valueOf(200), code);
 
-
-        String requestUrl_2 = SERVICE_URL + "/data/users";
-        Request request_2 = (new Builder())
-                .url(requestUrl_2)
-                .addHeader("content-type", "application/x-www-form-urlencoded")
-                .addHeader("Authorization", "Bearer: 1")
-                .get()
-                .build();
-        Response response_2 = client.newCall(request_2).execute();
+        String body = client.getAll("1");
 
         Type listType = new TypeToken<List<parseUser>>(){}.getType();
-        Map jsonJavaRootObject = new Gson().fromJson(response_2.body().string(), Map.class);
+        Map jsonJavaRootObject = new Gson().fromJson(body, Map.class);
         List<parseUser> users = new Gson().fromJson(jsonJavaRootObject.get("users").toString(), listType);
-        List<String> nameList = users.stream().map(parseUser::getName).sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
-        // System.out.println(nameList);
+        List<String> nameList = users.stream()
+                .map(parseUser::getName)
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .collect(Collectors.toList());
+        System.out.println(nameList);
 
         List<String> reallyExisting = Arrays.asList("admin", NEW_NEW_USER_NAME);
         reallyExisting.sort(String.CASE_INSENSITIVE_ORDER);
+
         assertArrayEquals(nameList.toArray(), reallyExisting.toArray());
     }
 
-
-//    @Test
-//    public void changeNameTest() throws Exception {
-//        OkHttpClient client = new OkHttpClient();
-//        String requestUrl = SERVICE_URL + "/profile/name";
-//        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-//        RequestBody body = RequestBody
-//                .create(mediaType, String.format("user=%s&password=%s", "admin", "ne_admin("));
-//        Request request = (new Builder())
-//                .url(requestUrl)
-//                .addHeader("content-type", "application/x-www-form-urlencoded")
-//                .addHeader("Authorization", "Bearer: " + getTestToken())
-//                .get()
-//                .build();
-//        Response response = client.newCall(request).execute();
-//        assertEquals(response.code(), 200);
-//        // Think about comparing two lists
-//    }
-//
-//    @Test
-//    public void changeEmailTest() throws Exception {
-//
-//
-//    }
-//
-
-//
-//    @Test
-//    public void testLeaderboard() throws Exception {
-//
-//    }
-//
-//
 
 
 }
